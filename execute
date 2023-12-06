@@ -1,0 +1,16 @@
+echo "c17"
+./project c17.isc c17.pattern c17.res
+echo "c880"
+./project c880.isc c880.pattern c880.res
+echo "c880"
+./project c1355.isc c1355.pattern c1355.res
+echo "c1355"
+./project c1908.isc c1908.pattern c1908.res
+echo "c1908"
+./project c2670.isc c2670.pattern c2670.res
+echo "c3540"
+./project c3540.isc c3540.pattern c3540.res
+echo "c5315"
+./project c5315.isc c5315.pattern c5315.res
+echo "c7552"
+./project c7552.isc c7552.pattern c7552.res
