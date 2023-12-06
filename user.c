@@ -155,64 +155,66 @@ void LogicSimulation(GATE *Node, int last_node_id, PATTERN *Pattern, int last_pa
 }
 
 void Print_PI(GATE *Node, int last_node_id){
-	int i;
-	for (i =1; i<= last_node_id; i++){
-		if (Node[i].Type == INPT){
-				if ((Node[i].Val) == 0)
-					printf("0");
-				else if ((Node[i].Val) == 1)
-					printf("1");
-				else 
-					printf("X");
-		}
-	}
-	printf("\n");
+	// int i;
+	// for (i =1; i<= last_node_id; i++){
+	// 	if (Node[i].Type == INPT){
+	// 			if ((Node[i].Val) == 0)
+	// 				printf("0");
+	// 			else if ((Node[i].Val) == 1)
+	// 				printf("1");
+	// 			else 
+	// 				printf("X");
+	// 	}
+	// }
+	// printf("\n");
+	printf("Success\n");
 }
 
 
-void PODEM (GATE *Node, TWO_INT gf, int last_node_id){
-	int result;
+int PODEM (GATE *Node, TWO_INT gf, int last_node_id){
+	int result, flag;
 	state = neutral;
 	initGatesToX(Node, last_node_id);
-	printf("Fault %d /%d\n",gf.first, gf.second);
+	//printf("Fault %d /%d\n",gf.first, gf.second);
 	LIST *Dfrontier = NULL;
 	TWO_INT gv;
 	result = PODEM_Recursion(Node, last_node_id, gf, Dfrontier );
-	if (result == success)
+	if (result == success){
 		Print_PI(Node, last_node_id);
-	else if (result == failure)
-		printf("Fault %d /%d is untestable\n",gf.first, gf.second);
+		flag = success;
+		}
+	else if (result == failure){
+		flag = failure;
+		printf("Failure");
+		}
 	FreeList(&Dfrontier);
+	return flag;
 }
 
 int PODEM_Recursion(GATE *Node, int last_node_id, TWO_INT gf, LIST *Dfrontier){
-	recursion_level++; printf("Recursion level = %d\n", recursion_level);
+	//recursion_level++; printf("Recursion level = %d\n", recursion_level);
 	int i, val= gf.second;
 	TWO_INT iu, gv;
-	int result = 0;
-	printf("state = %d\n", state);
+	int result = neutral;
 	if (state == success || state == failure)
 		return state;
-	//printf("Check before getObjective\n");
-	if (recursion_level >= 24 && Dfrontier == NULL){
-		printf("Null Dfrontier\n");
-	}
 	gv = getObjective(Node, gf, Dfrontier, val);
-	//printf("Check After getObjective\n");
 	iu = backtrace(Node, gv);
 	//printf("g %d,v %d pi %d u %d\n",gv.first, gv.second, iu.first, iu.second);
 	state = logicSimulate_imply(iu, Node, &Dfrontier, gf, last_node_id);
-	result = PODEM_Recursion(Node, last_node_id, gf, Dfrontier);
-	if (result){
+	if (state != failure)
+		result = PODEM_Recursion(Node, last_node_id, gf, Dfrontier);
+	if (result == success){
 		state = success;
 		return state;
 	}
-	else if (result == failure){
+	/*else if (result == failure){
 		state = failure;
 		return state;
-	} 
+	} */
 	iu.second = NOTG[iu.second];
 	state = logicSimulate_imply(iu, Node, &Dfrontier, gf, last_node_id);
+	if (state != failure)
 	result = PODEM_Recursion(Node, last_node_id, gf, Dfrontier);
 	if (result){
 		state = success;
@@ -223,7 +225,7 @@ int PODEM_Recursion(GATE *Node, int last_node_id, TWO_INT gf, LIST *Dfrontier){
 		return state;
 	} 
 	iu.second = X;
-	initGatesToX(Node, last_node_id);//state = logicSimulate_imply(iu, Node, Dfrontier, gf, last_node_id);
+	initGatesToX(Node, last_node_id);
 	return failure;
 }
 
@@ -241,11 +243,6 @@ TWO_INT getObjective(GATE *Node, TWO_INT gf, LIST *Dfrontier, int val){
 		return gv;
 	}
 	int i, d;
-	printf("Recursion level = %d\n", recursion_level);
-	if (recursion_level >= 24 && Dfrontier == NULL){
-		printf("Null Dfrontier\n");
-	}
-		
 	d = Dfrontier->Id;
 	temp = Node[d].Fin;
 	while (temp != NULL){
@@ -318,7 +315,6 @@ void initGatesToX(GATE *Node, int last_node_id){
 }
 
 int logicSimulate_imply(TWO_INT iu, GATE *Node, LIST **Dfrontier, TWO_INT gf, int last_node_id){
-	//printf("Recursion level = %d in logicSimulate_imply\n", recursion_level);
 	LIST *temp;
 	int id, val, fin_id, is_Dfrontier, i, local_state = neutral;
 	id = iu.first; val = iu.second;
@@ -404,26 +400,22 @@ int logicSimulate_imply(TWO_INT iu, GATE *Node, LIST **Dfrontier, TWO_INT gf, in
 			is_Dfrontier = CheckDfrontier(Node, i);
 			if (is_Dfrontier){
 				InsertEle((Dfrontier), i);
-				//printf("in Dfrontier check fault gate = %d val = %d\n", gf.first, Node[gf.first].Val);getchar();
-				//printf("Dfrontier = %d is inserted\n", i);
 			}
 			if (Node[gf.first].Val == 1 || Node[gf.first].Val == 0){
-				//printf("in fault mask check fault gate = %d val = %d\n", gf.first, Node[gf.first].Val);getchar();
 				local_state = failure;
-				printf("Fault Masked\n");
+				return failure;
 			}
 			//printf("Working gate = %d\n", i);
 			//PrintGats(Node, i); getchar();
 		}
 	}
-	if (*Dfrontier == NULL){
-		printf("Null Dfrontier in recursion level %d, fault site %d value is %d \n", recursion_level,gf.first,Node[gf.first].Val); getchar();
-	}
+	// if (*Dfrontier == NULL){
+	// 	printf("Null Dfrontier in recursion level %d, fault site %d value is %d \n", recursion_level,gf.first,Node[gf.first].Val); getchar();
+	// }
 	if(*Dfrontier == NULL && (Node[gf.first].Val == D || Node[gf.first].Val == Db)){ 
 		local_state = failure; 
-		printf("Dfrontier is null\n");
+		//printf("Dfrontier is null\n");
 	}
-	printf("local_state = %d\n", local_state);
 	//printf("Dfrontier = \n");
 	//PrintList(*Dfrontier);
 	return local_state;	
