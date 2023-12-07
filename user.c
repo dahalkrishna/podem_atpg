@@ -175,7 +175,6 @@ int PODEM (GATE *Node, TWO_INT gf, int last_node_id){
 	int result, flag;
 	state = neutral;
 	initGatesToX(Node, last_node_id);
-	//printf("Fault %d /%d\n",gf.first, gf.second);
 	LIST *Dfrontier = NULL;
 	TWO_INT gv;
 	result = PODEM_Recursion(Node, last_node_id, gf, Dfrontier );
@@ -200,11 +199,10 @@ int PODEM_Recursion(GATE *Node, int last_node_id, TWO_INT gf, LIST *Dfrontier){
 		return state;
 	gv = getObjective(Node, gf, Dfrontier, val);
 	iu = backtrace(Node, gv);
-	//printf("g %d,v %d pi %d u %d\n",gv.first, gv.second, iu.first, iu.second);
 	state = logicSimulate_imply(iu, Node, &Dfrontier, gf, last_node_id);
 	if (state != failure)
 		result = PODEM_Recursion(Node, last_node_id, gf, Dfrontier);
-	if (result == success){
+	if (result == success && state != failure){
 		state = success;
 		return state;
 	}
@@ -215,15 +213,15 @@ int PODEM_Recursion(GATE *Node, int last_node_id, TWO_INT gf, LIST *Dfrontier){
 	iu.second = NOTG[iu.second];
 	state = logicSimulate_imply(iu, Node, &Dfrontier, gf, last_node_id);
 	if (state != failure)
-	result = PODEM_Recursion(Node, last_node_id, gf, Dfrontier);
-	if (result){
+		result = PODEM_Recursion(Node, last_node_id, gf, Dfrontier);
+	if (result == success && state != failure){
 		state = success;
 		return state;
 	}
-	else if (result == failure){
-		state = failure;
-		return state;
-	} 
+	// else if (result == failure){
+	// 	state = failure;
+	// 	return state;
+	// } 
 	iu.second = X;
 	initGatesToX(Node, last_node_id);
 	return failure;
@@ -276,6 +274,7 @@ TWO_INT backtrace(GATE *Node, TWO_INT gv){ 		//g input of a gate in D frontier w
 	LIST *temp;
 	TWO_INT iv;
 	i = gv.first;
+	temp = Node[i].Fin;
 	if (Node[i].Type == NAND || Node[i].Type == NOR || Node[i].Type == NOT)
 				num_inversion++;
 	while (Node[i].Type != INPT){
@@ -317,6 +316,7 @@ void initGatesToX(GATE *Node, int last_node_id){
 int logicSimulate_imply(TWO_INT iu, GATE *Node, LIST **Dfrontier, TWO_INT gf, int last_node_id){
 	LIST *temp;
 	int id, val, fin_id, is_Dfrontier, i, local_state = neutral;
+	//state = neutral;
 	id = iu.first; val = iu.second;
 	Node[iu.first].Val = iu.second;
 	FreeList(Dfrontier);
@@ -388,7 +388,7 @@ int logicSimulate_imply(TWO_INT iu, GATE *Node, LIST **Dfrontier, TWO_INT gf, in
 			else if(Node[gf.first].Val == 1 && gf.second == 0)
 				Node[gf.first].Val = D;
 							
-			if (Node[i].Type !=0 && Node[i].Nfo ==0){
+			if (Node[i].Nfo ==0){
 				if(Node[i].Val == D || Node[i].Val == Db){
 					//local_state = success;
 					return success;
@@ -401,17 +401,19 @@ int logicSimulate_imply(TWO_INT iu, GATE *Node, LIST **Dfrontier, TWO_INT gf, in
 			if (is_Dfrontier){
 				InsertEle((Dfrontier), i);
 			}
-			if (Node[gf.first].Val == 1 || Node[gf.first].Val == 0){
-				local_state = failure;
-				return failure;
-			}
+			
 			//printf("Working gate = %d\n", i);
 			//PrintGats(Node, i); getchar();
 		}
 	}
+	printf("PI = %d, val = %d, f_site = %d, f_val = %d\n",iu.first,Node[iu.first].Val,gf.first, Node[gf.first].Val );
 	// if (*Dfrontier == NULL){
 	// 	printf("Null Dfrontier in recursion level %d, fault site %d value is %d \n", recursion_level,gf.first,Node[gf.first].Val); getchar();
 	// }
+	if (Node[gf.first].Val == 1 || Node[gf.first].Val == 0){
+		local_state = failure;
+		return failure;
+	}
 	if(*Dfrontier == NULL && (Node[gf.first].Val == D || Node[gf.first].Val == Db)){ 
 		local_state = failure; 
 		//printf("Dfrontier is null\n");

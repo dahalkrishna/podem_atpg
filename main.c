@@ -44,23 +44,22 @@ CountPri(Node,last_node_id,&Npi,&Npo);                 //Count the No of Pis and
 // //PrintGats(Node,last_node_id);
 // printf("\n\nNpi: %d Npo: %d\n",Npi,Npo);
 /****************************************mpiake***********************************************************/
-// g = 156 ; f = 1;
-// gf.first = g; gf.second =f;
-// PODEM (Node, gf, last_node_id);
-for (i = 11; i<=last_node_id; i++){
-	if(Node[i].Type != 0){
-		gf.first = i;
-
-		gf.second = 0;
-		printf("%d /%d:\t", gf.first, gf.second);
-		if(!PODEM (Node, gf, last_node_id))
-			faliure_count++;
-		gf.second = 1;
-		printf("%d /%d:\t", gf.first, gf.second);
-		if(!PODEM (Node, gf, last_node_id))
-			faliure_count++;
-	}
-}
+ g = 2637 ; f = 0;
+gf.first = g; gf.second =f;
+PODEM (Node, gf, last_node_id);
+// for (i = 1; i<=last_node_id; i++){
+// 	if(Node[i].Type != 0){
+// 		gf.first = i;
+// 		gf.second = 0;
+// 		printf("%d /%d:\t", gf.first, gf.second);
+// 		if(!PODEM (Node, gf, last_node_id))
+// 			faliure_count++;
+// 		gf.second = 1;
+// 		printf("%d /%d:\t", gf.first, gf.second);
+// 		if(!PODEM (Node, gf, last_node_id))
+// 			faliure_count++;
+// 	}
+// }
 printf("No of of Failures = %d\n", faliure_count);
 int coverage;
 coverage = (2*last_node_id - faliure_count)*100/(2*last_node_id);
