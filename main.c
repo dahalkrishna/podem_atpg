@@ -44,7 +44,7 @@ CountPri(Node,last_node_id,&Npi,&Npo);                 //Count the No of Pis and
 // //PrintGats(Node,last_node_id);
 // printf("\n\nNpi: %d Npo: %d\n",Npi,Npo);
 /****************************************mpiake***********************************************************/
- g = 2637 ; f = 0;
+ g = 156 ; f = 0;
 gf.first = g; gf.second =f;
 PODEM (Node, gf, last_node_id);
 // for (i = 1; i<=last_node_id; i++){
