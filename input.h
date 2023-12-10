@@ -110,7 +110,7 @@ void PrintPattern(int , PATTERN *, int );
 TWO_INT backtrace(GATE *, TWO_INT );
 TWO_INT getObjective(GATE *, TWO_INT , int);
 int getNonControlling(int);
-int PODEM (GATE *, TWO_INT , int );
+int PODEM (GATE *, TWO_INT , int, FILE * );
 int PODEM_Recursion(GATE *, int , TWO_INT );
 void initGatesToX(GATE *, int );
 int logicSimulate_imply(TWO_INT , GATE *,TWO_INT , int );

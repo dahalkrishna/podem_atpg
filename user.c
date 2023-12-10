@@ -164,25 +164,25 @@ void Print_PI(GATE *Node, int last_node_id){
 }
 
 
-int PODEM (GATE *Node, TWO_INT gf, int last_node_id){
+int PODEM (GATE *Node, TWO_INT gf, int last_node_id, FILE *Res){
 	int result, flag;
 	state = neutral;
 	initGatesToX(Node, last_node_id);
-	printf("%d /%d\t",gf.first, gf.second);
+	fprintf(Res,"%d /%d\t",gf.first, gf.second);
 	podem_start = clock();
 	result = PODEM_Recursion(Node, last_node_id, gf);
 	if (result == success){
-		Print_PI(Node, last_node_id);
-		printf("Success\n");
+		// Print_PI(Node, last_node_id);
+		fprintf(Res,"Success\n");
 		flag = success;
 		}
 	else if (result == failure){
 		flag = failure;
-		printf("Failure\n");
+		fprintf(Res,"Failure\n");
 	}
 	else if (result == timeout){
 		flag = timeout;
-		printf("Timeout\n");
+		fprintf(Res,"Timeout\n");
 	}
 	FreeList(&Dfrontier);
 	return flag;

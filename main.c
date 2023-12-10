@@ -44,27 +44,31 @@ CountPri(Node,last_node_id,&Npi,&Npo);                 //Count the No of Pis and
 // //PrintGats(Node,last_node_id);
 // printf("\n\nNpi: %d Npo: %d\n",Npi,Npo);
 /****************************************mpiake***********************************************************/
+Res = fopen(argv[2],"w");
+int podem_status;
 for (i = 1; i<=last_node_id; i++){
 	if(Node[i].Type != 0){
 		gf.first = i;
 		gf.second = 0;
-		if(PODEM (Node, gf, last_node_id) == failure)
+		podem_status = PODEM (Node, gf, last_node_id, Res);
+		if(podem_status == failure)
 			faliure_count++;
-		else if (PODEM (Node, gf, last_node_id) == timeout)
+		else if (podem_status == timeout)
 			time_fails++;
 		gf.second = 1;
-		if(PODEM (Node, gf, last_node_id) == failure)
+		podem_status = PODEM (Node, gf, last_node_id, Res);
+		if(podem_status == failure)
 			faliure_count++;
-		else if (PODEM (Node, gf, last_node_id) == timeout)
+		else if (PODEM (Node, gf, last_node_id, Res) == timeout)
 			time_fails++;
 	}
 }
-printf("No of of Failures = %d\n", faliure_count);
-printf("No of of Timeouts = %d\n", time_fails);
+fprintf(Res,"No of of Failures = %d\n", faliure_count);
+fprintf(Res,"No of of Timeouts = %d\n", time_fails);
 int coverage;
 coverage = (2*last_node_id - faliure_count - time_fails)*100/(2*last_node_id);
-printf("Coverage = %d %%\n", coverage);
-
+fprintf(Res,"Coverage = %d %%\n", coverage);
+fclose(Res);
 
 
 
