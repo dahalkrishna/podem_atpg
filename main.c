@@ -16,7 +16,7 @@ int Npi,Npo,last_node_id,last_patt_id;                     //Tot no of PIs,Pos,M
 GATE *Node;                           //Structure to store the ckt given in .isc file 
 clock_t Start,End;                    //Clock variables to calculate the Cputime
 double Cpu;                           //Total cpu time
-int i,j, g, f, faliure_count =0;                              //Temporary variables
+int i,j, g, f, faliure_count =0, time_fails = 0;                              //Temporary variables
 PATTERN *Pattern;
 TWO_INT gf;
 /****************PART 1.-Read the .isc file and store the information in Node structure***********/
@@ -44,25 +44,25 @@ CountPri(Node,last_node_id,&Npi,&Npo);                 //Count the No of Pis and
 // //PrintGats(Node,last_node_id);
 // printf("\n\nNpi: %d Npo: %d\n",Npi,Npo);
 /****************************************mpiake***********************************************************/
- g = 156 ; f = 0;
-gf.first = g; gf.second =f;
-PODEM (Node, gf, last_node_id);
-// for (i = 1; i<=last_node_id; i++){
-// 	if(Node[i].Type != 0){
-// 		gf.first = i;
-// 		gf.second = 0;
-// 		printf("%d /%d:\t", gf.first, gf.second);
-// 		if(!PODEM (Node, gf, last_node_id))
-// 			faliure_count++;
-// 		gf.second = 1;
-// 		printf("%d /%d:\t", gf.first, gf.second);
-// 		if(!PODEM (Node, gf, last_node_id))
-// 			faliure_count++;
-// 	}
-// }
+for (i = 1; i<=last_node_id; i++){
+	if(Node[i].Type != 0){
+		gf.first = i;
+		gf.second = 0;
+		if(PODEM (Node, gf, last_node_id) == failure)
+			faliure_count++;
+		else if (PODEM (Node, gf, last_node_id) == timeout)
+			time_fails++;
+		gf.second = 1;
+		if(PODEM (Node, gf, last_node_id) == failure)
+			faliure_count++;
+		else if (PODEM (Node, gf, last_node_id) == timeout)
+			time_fails++;
+	}
+}
 printf("No of of Failures = %d\n", faliure_count);
+printf("No of of Timeouts = %d\n", time_fails);
 int coverage;
-coverage = (2*last_node_id - faliure_count)*100/(2*last_node_id);
+coverage = (2*last_node_id - faliure_count - time_fails)*100/(2*last_node_id);
 printf("Coverage = %d %%\n", coverage);
 
 
@@ -77,7 +77,7 @@ clock_t end = clock();
 // dividing the difference by CLOCKS_PER_SEC to convert to seconds
 time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
 printf("Time = %f\n", time_spent);
-getchar();	
+//getchar();	
 return 0;
 }//end of main
 /****************************************************************************************************************************/

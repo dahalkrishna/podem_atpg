@@ -38,8 +38,14 @@ Constant Declarations
 #define XOR  9			// XOR 
 #define XNOR 10			// XNOR 
 
-
-
+// USER DEFINED
+#define X 2
+#define D 3
+#define Db 4
+#define success 1
+#define failure 0
+#define neutral 2
+#define timeout 3
 /***************************************************************************************************************************
 Structure Declarations 
 ****************************************************************************************************************************/
@@ -102,11 +108,11 @@ int ReadPat(FILE *, PATTERN *, int);
 void LogicSimulation(GATE *, int , PATTERN *, int, FILE *);
 void PrintPattern(int , PATTERN *, int );
 TWO_INT backtrace(GATE *, TWO_INT );
-TWO_INT getObjective(GATE *, TWO_INT , LIST *, int);
+TWO_INT getObjective(GATE *, TWO_INT , int);
 int getNonControlling(int);
 int PODEM (GATE *, TWO_INT , int );
-int PODEM_Recursion(GATE *, int , TWO_INT , LIST *);
+int PODEM_Recursion(GATE *, int , TWO_INT );
 void initGatesToX(GATE *, int );
-int logicSimulate_imply(TWO_INT , GATE *, LIST **, TWO_INT , int );
+int logicSimulate_imply(TWO_INT , GATE *,TWO_INT , int );
 int CheckDfrontier(GATE *, int );
 /****************************************************************************************************************************/

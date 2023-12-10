@@ -63,7 +63,7 @@ Print the elements in LIST "Cur"
 void PrintList(LIST *Cur)
 {
 LIST *tmp=Cur;
-printf("aaaaa");
+
 while(tmp!=NULL){   
   printf("%d  ", tmp->Id);
   tmp = tmp->Next; } 
