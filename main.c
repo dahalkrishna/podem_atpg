@@ -59,7 +59,7 @@ for (i = 1; i<=last_node_id; i++){
 		podem_status = PODEM (Node, gf, last_node_id, Res);
 		if(podem_status == failure)
 			faliure_count++;
-		else if (PODEM (Node, gf, last_node_id, Res) == timeout)
+		else if (podem_status == timeout)
 			time_fails++;
 	}
 }
