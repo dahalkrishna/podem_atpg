@@ -1,5 +1,5 @@
-Implementation of PODEM to generate test patterns for stuck at faults and calculate the fault coverage on the ISCAS85 benchmark files. The program also has a serial logic simulator that reads from pattern file and displays the values at the output port at hte terminal.
-Code was implemented as a part of a coursework and may not be as efficient. A single pattern per fault is generated The algorithm drops trying to find a test pattern for a fault if it takes more than 200ms and prints a Timeout
+Implementation of PODEM to generate test patterns for stuck-at faults and calculate the fault coverage on the ISCAS85 benchmark files. The program also has a serial logic simulator that reads from a pattern file and displays the values at the output port at the terminal.
+Code was implemented as a part of coursework. A single pattern per fault is generated The algorithm drops trying to find a test pattern for a fault if it takes more than 200ms and prints a Timeout
 The result files are in the format:   
 _Example:   
 1 /0	Success  
